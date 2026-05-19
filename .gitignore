@@ -37,3 +37,6 @@ _site/
 # 其他
 *.bak
 *.backup
+
+# 打包文件
+h3yun-dev-assistant.zip
