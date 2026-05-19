@@ -35,8 +35,13 @@
 
 ## 🚀 快速开始
 
-### 手动打包
-运行 `package-skill.cmd` 即可生成 zip 包
+### 打包技能文件
+Clone 仓库后,运行 `package-skill.cmd` 生成 zip 包:
 
-### 自动打包
-每次 git commit 后会自动执行打包,生成 `h3yun-dev-assistant.zip`
+```cmd
+package-skill.cmd
+```
+
+或者直接双击运行 `package-skill.cmd` 文件。
+
+生成的 `h3yun-dev-assistant.zip` 即可导入到 AI 工具中使用。
