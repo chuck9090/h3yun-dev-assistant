@@ -1,0 +1,30 @@
+version: '1.0'
+name: build-package-pipeline
+displayName: 技能文件打包流水线
+triggers:
+  trigger: auto
+  push:
+    branches:
+      include:
+        - master
+        - main
+  pr:
+    branches:
+      include:
+        - master
+        - main
+stages:
+  - name: package
+    displayName: 打包
+    strategy: naturally
+    trigger: auto
+    steps:
+      - step: publish@release_artifacts
+        name: publish_release_artifacts
+        displayName: 发布
+        dependArtifact: output
+        version: 1.0.0.0
+        autoIncrement: true
+        notify: []
+        strategy:
+          retry: '0'
