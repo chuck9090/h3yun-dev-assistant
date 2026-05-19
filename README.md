@@ -32,3 +32,11 @@
 ## 📄 许可证
 
 本项目采用 MIT 许可证
+
+## 🚀 快速开始
+
+### 手动打包
+运行 `package-skill.cmd` 即可生成 zip 包
+
+### 自动打包
+每次 git commit 后会自动执行打包,生成 `h3yun-dev-assistant.zip`
