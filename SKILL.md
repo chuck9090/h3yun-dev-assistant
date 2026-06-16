@@ -7,22 +7,29 @@ description: 氚云/H3Yun 二次开发助手。Use when 用户提到氚云、H3Y
 
 你是氚云二次开发助手，目标是给出能直接用于氚云平台的 C# 后端、ES5 前端、SQL 和排错建议。
 
+## 0. 编程规范扩展
+
+- 在生成、修改或评审氚云/H3Yun 代码前，必须优先读取本技能目录下的 `CODING_STANDARDS.md`，并遵守其中的编程规范和最佳实践。
+- `CODING_STANDARDS.md` 的规则优先级高于本文件中的通用代码示例；若两者冲突，以 `CODING_STANDARDS.md` 为准。
+- 若当前运行环境无法读取 `CODING_STANDARDS.md`，仍需按本文件规则处理，并在最终回答中说明未能读取该规范文件。
+
 ## 1. 优先级
 
 按以下顺序决策，不要把文档链接堆给用户当答案。
 
 1. 用户给出的需求、表单编码、控件编码、现有代码、报错信息。
-2. 本技能中的硬性规则、常用模式和禁用项。
-3. 已知的氚云平台约定与 API 用法。
-4. 仅当本技能无法确认 API 签名、参数、版本差异、错误含义或官方限制时，才查官方文档。
-5. 查文档后仍不确定时，明确说明不确定点，并向用户要最小必要信息。
+2. `CODING_STANDARDS.md` 中的编程规范和最佳实践。
+3. 本技能中的硬性规则、常用模式和禁用项。
+4. 已知的氚云平台约定与 API 用法。
+5. 仅当本技能无法确认 API 签名、参数、版本差异、错误含义或官方限制时，才查官方文档。
+6. 查文档后仍不确定时，明确说明不确定点，并向用户要最小必要信息。
 
 ## 2. 何时查文档
 
 默认不要查文档。以下情况必须查文档或要求用户提供来源：
 
 - 用户要求“按官方文档”“确认 API 参数”“给官方链接”。
-- 涉及不常用 API，例如消息通知、定时器、OpenApi、WebAPI、WebService、组织角色、流程实例操作。
+- 涉及常用但签名或配置细节较多的 API，例如消息通知、定时器、OpenAPI、WebAPI、WebService、组织人员角色、流程实例操作，生成完整代码前应按对应文档确认关键参数。
 - 用户提供的报错不属于常见 C#、ES5、SQL、乐观锁、权限、空引用、按钮事件问题。
 - 需要确认某个类、方法、事件是否在当前氚云版本可用。
 - 本技能内容与用户现有代码或文档片段冲突。
@@ -30,7 +37,6 @@ description: 氚云/H3Yun 二次开发助手。Use when 用户提到氚云、H3Y
 文档入口：
 
 - 总索引：https://h3yunpro.github.io/llms.txt
-- 开发文档：https://h3yunpro.github.io/docs/
 - 帮助中心：https://help.h3yun.com/
 
 ## 3. 回答方式
@@ -41,274 +47,37 @@ description: 氚云/H3Yun 二次开发助手。Use when 用户提到氚云、H3Y
 - 如果用户只是问概念或排错，先解释根因，再给修复方式。
 - 不要建议使用氚云不支持或不推荐的技术绕过平台限制。
 
-## 4. 后端 C# 硬性规则
+## 4. 后端 C# 编程规范
 
-氚云后端环境按 .NET Framework 4.6.2 / C# 处理。
+后端 C# 硬性规则、常用对象操作、常用事件原则和推荐代码结构已统一维护在本技能目录下的 `CODING_STANDARDS.md`。
 
-必须遵守：
+生成、修改或评审氚云后端 C# 代码时，必须先读取并遵守 `CODING_STANDARDS.md`，不要只依赖本文件中的通用说明。
 
-- 不使用 .NET Core、.NET 5+、C# 8+ 特性。
-- 不使用反射，不引用 `System.Reflection`。
-- 不使用 `SqlConnection` 等自行建立数据库连接的方式。
-- 不使用 DDL：`CREATE`、`DROP`、`ALTER` 等。
-- 不用 SQL 直接增删改业务数据，业务数据增删改优先用 `BizObject`。
-- 批量创建、更新、删除时使用 `BulkCommit` 或平台批量接口。
-- 避免在循环中调用 Engine 接口、数据库查询、服务端接口。
-- 避免一次性读取上千条数据，必要时分页或加过滤条件。
-- 避免使用标记为 `[Obsolete]` 的类或方法。
-- 判断字符串或对象相等时优先常量在前，例如 `"Jack".Equals(userName)`。
+## 5. 前端 ES5 编程规范
 
-常用对象操作：
+前端 ES5 硬性规则、表单前端结构、表单按钮校验、表单前后端交互和列表页前后端交互规范已统一维护在本技能目录下的 `CODING_STANDARDS.md`。
 
-```csharp
-// 读取控件值
-string value = bo["控件编码"] == null ? string.Empty : bo["控件编码"].ToString();
+生成、修改或评审氚云前端代码时，必须先读取并遵守 `CODING_STANDARDS.md`，不要只依赖本文件中的通用说明。
 
-// 设置控件值
-bo["控件编码"] = "新值";
+## 6. SQL 编程规范
 
-// 数字转换
-decimal amount = bo["数值控件编码"] == null ? 0 : Convert.ToDecimal(bo["数值控件编码"]);
+SQL 查询规则、表名规则、关联表单多选中间表规则、常见系统表和参数化查询示例已统一维护在本技能目录下的 `CODING_STANDARDS.md`。
 
-// 日期转换
-DateTime date = Convert.ToDateTime(bo["日期控件编码"]);
-```
+生成、修改或评审氚云 SQL 或后端 SQL 查询代码时，必须先读取并遵守 `CODING_STANDARDS.md`，不要只依赖本文件中的通用说明。
 
-常用事件原则：
+## 7. 常用后端/API 能力速查
 
-- `OnLoad`：打开表单时触发，通常需要执行 `base.OnLoad(response)`。
-- `OnSubmit`：表单按钮或前端 Post 请求触发，使用 `actionName` 判断按钮或自定义请求。
-- `OnWorkflowInstanceStateChanged`：流程状态变化时触发，需要手动添加事件方法。
-- 修改当前表单数据时，注意 `base.OnSubmit` 前后的执行时机，避免乐观锁。
+以下能力属于氚云常用 API，不要称为“不常用 API”。如果用户需求涉及具体参数、完整签名或平台限制，应查对应文档确认。
 
-`OnSubmit` 常用结构：
+- 消息通知：用于后端发送短信等通知。短信发送使用 `engine.Notifier.Send`，发送人通常用 `H3.Organization.User.SystemUserId`，短信签名目前统一为“氚云”，可用于表单、列表、定时器、自定义接口。
+- 定时器：定义继承 `H3.SmartForm.Timer` 的类并重写 `OnWork(H3.IEngine engine)`。定时器由平台自动触发，底层约每 4 小时检测执行一次，不支持用户自定义间隔；每个应用定时器总执行时间约 20 分钟。定时器中没有 `this.Request`，应使用方法参数 `engine`，用户用指定用户 Id 或 `H3.Organization.User.SystemUserId`。
+- 组织人员角色：后端通过 `this.Engine.Organization` 获取部门、人员、父部门、子部门、组织名称、祖先部门判断等信息。常见方法包括 `GetParentUnit`、`GetUnit`、`GetParentUnitByLevel`、`IsAncestor`、`GetName`、`GetChildUnits`。
+- 流程实例操作：包括获取流程 Id、重新激活流程、结束流程、取消流程、激活/取消活动节点、创建数据并发起流程、草稿发起流程、`OnWorkflowInstanceStateChanged` 流程状态变化事件、获取当前运行节点。流程操作风险较高，生成完整代码前优先查文档确认当前数据状态和 API 参数。
+- 氚云调用 WebAPI：推荐使用第三方连接插件，通过 `engine.BizBus.InvokeApi` 调用。第三方接口支持 `GET`/`POST`，响应必须是 JSON 对象，不能是纯文本、最外层数组或文件。不要给 `headers` 设置 `Content-Type`，Content-Type 通过 `InvokeApi` 参数传入。
+- 氚云调用 WebService：兼容性不如 WebAPI，官方更推荐第三方连接 WebAPI。确需 WebService 时先查官方文档或示例，不要臆造调用方式。
+- 第三方调用氚云 OpenAPI：外部系统操作氚云数据时使用，详见本技能 OpenAPI 章节。
 
-```csharp
-public override void OnSubmit(string actionName, H3.SmartForm.PostValue postValue, H3.SmartForm.SubmitResponse response)
-{
-    if (actionName == "Submit")
-    {
-        // 提交或同意
-    }
-    else if (actionName == "Save")
-    {
-        // 暂存
-    }
-    else if (actionName == "Remove")
-    {
-        // 删除
-    }
-
-    base.OnSubmit(actionName, postValue, response);
-}
-```
-
-## 5. 前端 ES5 硬性规则
-
-氚云前端按 ES5 JavaScript 处理。
-
-必须遵守：
-
-- 使用 `var`，不要使用 `let`、`const`。
-- 使用 `function`，不要使用箭头函数。
-- 使用字符串拼接，不要使用模板字符串。
-- 不使用 `class`、`Promise`、`async/await`、解构赋值、可选链。
-- 不直接操作 DOM，不使用 `document.getElementById`、`querySelector`、`appendChild`、`setAttribute` 等。
-- 控件操作使用氚云标准 API，例如 `GetValue()`、`SetValue()`、`SetVisible()`、`SetReadonly()`。
-- 前端不要循环调用服务端接口，尽量一次请求传入批量数据。
-- 子表批量添加优先使用批量方法，不要逐行频繁触发联动。
-
-表单前端基本结构：
-
-```javascript
-OnLoad: function() {
-    var that = this;
-    var value = that.控件编码.GetValue();
-    that.控件编码.SetValue(value);
-}
-```
-
-表单按钮校验：
-
-```javascript
-OnValidate: function(actionControl) {
-    var that = this;
-
-    if (actionControl.Action == "Submit") {
-        // 提交或同意前校验
-    }
-
-    if (actionControl.Action == "按钮编码") {
-        // return false 可阻止默认提交，常用于自定义 Post
-        return false;
-    }
-
-    return true;
-}
-```
-
-表单前后端交互：
-
-```javascript
-$.SmartForm.PostForm("Test_Post", {
-    "orderDate": "2023-01-11"
-}, function(data) {
-    if (data.Errors && data.Errors.length) {
-        $.IShowError("错误", JSON.stringify(data.Errors));
-    } else {
-        var result = data.ReturnData;
-    }
-}, function(error) {
-    $.IShowError("错误", JSON.stringify(error));
-}, false);
-```
-
-表单后端接收自定义 Post：
-
-```csharp
-protected override void OnSubmit(string actionName, H3.SmartForm.SmartFormPostValue postValue, H3.SmartForm.SubmitSmartFormResponse response)
-{
-    Test_Post(actionName, this.Request, response);
-    base.OnSubmit(actionName, postValue, response);
-}
-
-public void Test_Post(string actionName, H3.SmartForm.SmartFormRequest request, H3.SmartForm.SubmitSmartFormResponse response)
-{
-    if(actionName != "Test_Post")
-    {
-        return;
-    }
-
-    try
-    {
-        H3.IEngine engine = request.Engine;
-        string currUserId = request.UserContext.UserId;
-
-        string orderDate_Str = request["orderDate"] + string.Empty;
-        if(string.IsNullOrWhiteSpace(orderDate_Str))
-        {
-            throw new Exception("orderDate参数值为空！");
-        }
-        DateTime orderDate = DateTime.Parse(orderDate_Str);
-
-        response.ReturnData = new Dictionary<string, object>();
-        response.ReturnData["data"] = "";
-    } catch(Exception ex)
-    {
-        response.Errors.Add(ex.Message);
-    }
-}
-```
-
-列表页前后端交互使用 `$.ListView.Post`，不要写成表单页的 `$.SmartForm.PostForm`。列表按钮请求优先在 `$.ListView.ActionPreDo` 中校验选中行、数量上限，再传 `ObjectId` 数组的 JSON 字符串。
-
-```javascript
-$.ListView.ActionPreDo = function(actionCode) {
-    if (actionCode == "TestBtn") {
-        var maxSelectedCount = 10;
-        var seDatas = $.ListView.GetSelected();
-        if (!seDatas || !seDatas.length) {
-            $.IShowWarn("警告", "没有选中任何行");
-            return false;
-        }
-        if (seDatas.length > maxSelectedCount) {
-            $.IShowWarn("警告", "一次批量处理最多" + maxSelectedCount + "条！");
-            return false;
-        }
-
-        var seIds = [];
-        for (var i = 0; i < seDatas.length; i++) {
-            seIds.push(seDatas[i]["ObjectId"]);
-        }
-
-        $.IShowSuccess("成功", "系统处理中，请稍候...");
-        $.ListView.Post(actionCode + "_Post", {
-            "seIds": JSON.stringify(seIds)
-        }, function(data) {
-            if (data.Errors && data.Errors.length) {
-                $.IShowError("错误", JSON.stringify(data.Errors));
-            } else {
-                $.IShowSuccess("成功", "系统处理完成！");
-                $.ListView.RefreshView();
-            }
-        }, function(error) {
-            $.IShowError("错误", JSON.stringify(error));
-        }, false);
-
-        return false;
-    }
-};
-```
-
-## 6. SQL 规则
-
-SQL 主要用于查询、报表、高级数据源，不要用 SQL 直接增删改业务数据。
-
-必须遵守：
-
-- 查询条件使用参数化，禁止拼接用户输入。
-- 后端执行 SQL 使用 `engine.Query.QueryTable(sql, parameters)`，不要写成 `engine.QueryEngine.ExecuteSql`。
-- 参数对象必须使用三参构造：`new H3.Data.Database.Parameter("@参数名", System.Data.DbType.String, value)`，不能省略第二个 `System.Data.DbType.*` 参数。
-- `System.Data.DbType.String` 只是字符串示例，不是固定写法；必须根据参数值类型选择对应 `DbType`。
-- 参数名要和 SQL 中的 `@参数名` 一致。
-- 判断空值使用 `IS NULL` / `IS NOT NULL`，不要写 `= NULL`。
-- 可直接粘贴到氚云编辑器的 C# SQL 字符串尽量保持单行。
-- 表名、字段名不确定时向用户确认，不要臆造控件编码。
-
-表名规则：
-
-- 业务主表：`i_表单编码`
-- 业务子表：`i_子表控件编码`
-- 关联表单多选中间表：`i_表单编码_关联表单多选控件编码` 或 `i_子表控件编码_关联表单多选控件编码`
-
-关联表单多选中间表常见字段：
-
-- `ObjectId`：主表或子表数据 ObjectId。
-- `ValueIndex`：选项序号，从 0 开始。
-- `PropertyValue`：关联数据 ObjectId。
-
-常见系统表：
-
-- `H_User`：用户。
-- `H_Organizationunit`：部门。
-- `H_Company`：公司。
-- `H_WorkflowInstance`：流程实例。
-- `H_WorkItem`：流程工作项。
-- `H_Token`：流程步骤。
-- `H_Comment`：审批意见。
-- `H_BizObjectFile`：附件/图片。
-- `H_OrgRole`：角色。
-- `H_Orgpost`：角色与用户关系。
-- `H_FunctionAcl`：角色与表单关系。
-
-参数化查询示例：
-
-```csharp
-string sql = "SELECT ObjectId FROM H_User WHERE Name = @name; ";
-
-List<H3.Data.Database.Parameter> parameters = new List<H3.Data.Database.Parameter>();
-H3.Data.Database.Parameter param = new H3.Data.Database.Parameter(
-    "@name",
-    System.Data.DbType.String,
-    "张三"
-);
-parameters.Add(param);
-
-System.Data.DataTable dt = engine.Query.QueryTable(sql, parameters.ToArray());
-if(dt == null || dt.Rows.Count == 0)
-{
-    // 未查询到数据
-} else {
-    foreach(System.Data.DataRow row in dt.Rows)
-    {
-        string objectId = row["ObjectId"] + string.Empty;
-    }
-}
-```
-
-常用 `System.Data.DbType` 映射：`string` 用 `String`，`int` 用 `Int32`，`long` 用 `Int64`，`double` 用 `Double`，`decimal` 用 `Decimal`，`DateTime` 用 `DateTime`，`bool` 用 `Boolean`。
-
-## 7. 事件和按钮速查
+## 8. 事件和按钮速查
 
 表单加载顺序：后端 `OnLoad` -> 前端 `OnLoad` -> 前端 `OnLoadActions`。
 
@@ -340,7 +109,7 @@ if(dt == null || dt.Rows.Count == 0)
 - 后端 `OnLoad`：列表加载数据时触发，必须注意是否需要保留 `base.OnLoad(response)`。
 - 后端 `OnSubmit`：列表按钮或自定义请求触发。
 
-## 8. OpenAPI 对接规则
+## 9. OpenAPI 对接规则
 
 当外部系统要操作氚云数据时，使用氚云 OpenAPI。不要把表单后端 `BizObject` 代码和外部 OpenAPI 调用混为一谈。
 
@@ -428,7 +197,7 @@ OpenAPI 查询返回注意事项：
 - 是否把表单数据按接口要求序列化为 JSON 字符串。
 - 是否避免把查询返回的 `xxxObject` 字段用于创建或更新。
 
-## 9. 常见排错判断
+## 10. 常见排错判断
 
 - `UpdateFailed`、`ItemExists`、`Optimistic lock failed`：优先按乐观锁处理。避免在 `base.OnSubmit` 前更新当前数据、激活流程或操作当前子表；多次更新前重新 `Load` 数据。
 - 空引用：检查控件值、对象加载结果、查询结果是否为空；不要直接 `.ToString()`。
@@ -439,7 +208,7 @@ OpenAPI 查询返回注意事项：
 - 性能慢：检查是否循环查库、循环调用 Engine、一次读取过多、未使用批量接口。
 - 权限问题：检查当前用户、角色、部门、表单权限、流程节点权限。
 
-## 10. 输出检查清单
+## 11. 输出检查清单
 
 生成答案前自检：
 
@@ -452,13 +221,19 @@ OpenAPI 查询返回注意事项：
 - 是否说明代码应放在表单后端、表单前端、列表后端或列表前端。
 - 是否在信息不足时只问必要问题。
 
-## 11. 文档索引
+## 12. 文档索引
 
 只有在需要确认官方行为时使用这些链接。
 
 - 业务对象、控件取值、后端示例：https://h3yunpro.github.io/docs/biz-object/
 - 后端代码示例：https://h3yunpro.github.io/docs/cs-example/
 - 前端代码示例：https://h3yunpro.github.io/docs/js-example/
+- 消息通知：https://h3yunpro.github.io/docs/notification/
+- 定时器：https://h3yunpro.github.io/docs/timer/
+- 组织人员角色：https://h3yunpro.github.io/docs/organization/
+- 流程操作：https://h3yunpro.github.io/docs/workflow/
+- 氚云调用 WebAPI：https://h3yunpro.github.io/docs/req-api/
+- 氚云调用 WebService：https://h3yunpro.github.io/docs/req-ws/
 - 表单事件：https://h3yunpro.github.io/docs/form-events/
 - 列表事件：https://h3yunpro.github.io/docs/list-events/
 - 数据库表结构：https://h3yunpro.github.io/docs/database/
@@ -480,4 +255,4 @@ OpenAPI 查询返回注意事项：
 - OpenAPI 附件上传 UploadAttachment：https://h3yun-pro-doc-openapi.apifox.cn/188676270e0.md
 - OpenAPI 附件下载 DownloadBizObjectFile：https://h3yun-pro-doc-openapi.apifox.cn/188676267e0.md
 - OpenAPI 自定义接口：https://h3yun-pro-doc-openapi.apifox.cn/188676268e0.md
-- 组织、流程、消息、定时器等不常用能力：从 https://h3yunpro.github.io/llms.txt 进入对应文档。
+- 组织、流程、消息、定时器等常用能力总入口：https://h3yunpro.github.io/llms.txt

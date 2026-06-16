@@ -17,6 +17,11 @@ if not exist "README.md" (
     echo.
 )
 
+if not exist "CODING_STANDARDS.md" (
+    echo [WARNING] CODING_STANDARDS.md not found, will package without coding standards
+    echo.
+)
+
 REM Create temp directory
 echo Step 1/4: Creating package directory...
 if exist "dist" rmdir /s /q "dist"
@@ -26,6 +31,7 @@ REM Copy files to package directory
 echo Step 2/4: Copying files...
 copy SKILL.md dist\SKILL.md >nul
 if exist "README.md" copy README.md dist\README.md >nul
+if exist "CODING_STANDARDS.md" copy CODING_STANDARDS.md dist\CODING_STANDARDS.md >nul
 
 REM Create ZIP archive
 echo Step 3/4: Creating ZIP archive...
