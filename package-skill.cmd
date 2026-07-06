@@ -6,18 +6,13 @@ echo ========================================
 echo.
 
 REM Check if required files exist
-if not exist "SKILL.md" (
-    echo [ERROR] SKILL.md not found!
+if not exist "skill\SKILL.md" (
+    echo [ERROR] skill\SKILL.md not found!
     pause
     exit /b 1
 )
 
-if not exist "README.md" (
-    echo [WARNING] README.md not found, will only package SKILL.md
-    echo.
-)
-
-if not exist "CODING_STANDARDS.md" (
+if not exist "skill\CODING_STANDARDS.md" (
     echo [WARNING] CODING_STANDARDS.md not found, will package without coding standards
     echo.
 )
@@ -29,9 +24,8 @@ mkdir dist
 
 REM Copy files to package directory
 echo Step 2/4: Copying files...
-copy SKILL.md dist\SKILL.md >nul
-if exist "README.md" copy README.md dist\README.md >nul
-if exist "CODING_STANDARDS.md" copy CODING_STANDARDS.md dist\CODING_STANDARDS.md >nul
+copy skill\SKILL.md dist\SKILL.md >nul
+if exist "skill\CODING_STANDARDS.md" copy skill\CODING_STANDARDS.md dist\CODING_STANDARDS.md >nul
 
 REM Create ZIP archive
 echo Step 3/4: Creating ZIP archive...

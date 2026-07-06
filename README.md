@@ -35,13 +35,30 @@
 
 ## 🚀 快速开始
 
+### 项目结构
+技能内容放在 `skill/` 子目录中,外层文件用于项目说明和打包维护。
+
+- `skill/SKILL.md`: 技能主说明文件
+- `skill/CODING_STANDARDS.md`: 氚云代码规范说明
+- `package-skill.cmd`: Windows 打包命令
+- `package-skill.sh`: macOS / Linux 打包命令
+
 ### 打包技能文件
-Clone 仓库后,运行 `package-skill.cmd` 生成 zip 包:
+Clone 仓库后,根据当前系统选择对应命令生成 zip 包。打包脚本会读取 `skill/` 目录中的技能文件,并生成可导入 AI 工具的 `h3yun-dev-assistant.zip`。
+
+Windows 用户运行 `package-skill.cmd`:
 
 ```cmd
 package-skill.cmd
 ```
 
 或者直接双击运行 `package-skill.cmd` 文件。
+
+macOS / Linux 用户运行 `package-skill.sh`:
+
+```bash
+chmod +x package-skill.sh
+./package-skill.sh
+```
 
 生成的 `h3yun-dev-assistant.zip` 即可导入到 AI 工具中使用。
