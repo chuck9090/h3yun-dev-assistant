@@ -40,25 +40,17 @@
 
 - `skill/SKILL.md`: 技能主说明文件
 - `skill/CODING_STANDARDS.md`: 氚云代码规范说明
-- `package-skill.cmd`: Windows 打包命令
-- `package-skill.sh`: macOS / Linux 打包命令
+- `.github/workflows/release.yml`: GitHub 自动打包与发布工作流
 
-### 打包技能文件
-Clone 仓库后,根据当前系统选择对应命令生成 zip 包。打包脚本会读取 `skill/` 目录中的技能文件,并生成可导入 AI 工具的 `h3yun-dev-assistant.zip`。
+### 发布技能文件
 
-Windows 用户运行 `package-skill.cmd`:
+推送以 `v` 开头的版本 Tag 后,GitHub Actions 会自动读取 `skill/` 目录中的技能文件,生成带版本号的 ZIP,并上传到该 Tag 对应的 GitHub Release。
 
-```cmd
-package-skill.cmd
+例如发布 `v1.0.0`:
+
+```shell
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-或者直接双击运行 `package-skill.cmd` 文件。
-
-macOS / Linux 用户运行 `package-skill.sh`:
-
-```bash
-chmod +x package-skill.sh
-./package-skill.sh
-```
-
-生成的 `h3yun-dev-assistant.zip` 即可导入到 AI 工具中使用。
+工作流将生成 `h3yun-dev-assistant-v1.0.0.zip`,用户可在仓库的 Releases 页面下载并导入 AI 工具。

@@ -1,0 +1,48 @@
+name: Package release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate package files
+        shell: bash
+        run: |
+          test -f skill/SKILL.md
+          test -f skill/CODING_STANDARDS.md
+
+      - name: Create ZIP package
+        id: package
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME}"
+          archive="h3yun-dev-assistant-${version}.zip"
+          cd skill
+          zip -9 "../${archive}" SKILL.md CODING_STANDARDS.md
+          echo "archive=${archive}" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release and upload package
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARCHIVE: ${{ steps.package.outputs.archive }}
+        shell: bash
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$ARCHIVE" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$ARCHIVE" \
+              --verify-tag \
+              --generate-notes \
+              --title "$GITHUB_REF_NAME"
+          fi
