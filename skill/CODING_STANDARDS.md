@@ -31,6 +31,7 @@
 - 避免在循环中调用 Engine 接口、数据库查询、服务端接口。
 - 避免一次性读取上千条数据，必要时分页或加过滤条件。
 - 避免使用标记为 `[Obsolete]` 的类或方法。
+- 不使用 `HashSet<T>`，氚云沙箱不支持此类型。去重需求用 `Dictionary<string, object>` 的 Key 替代。
 - 生成代码不要使用三目运算符 `?:`，优先使用清晰的 `if` 判断，提升可读性。
 - 判断字符串或对象相等时优先常量在前，例如 `"Jack".Equals(userName)`。
 
@@ -155,6 +156,8 @@ private void CheckData(H3.IEngine engine, H3.DataModel.BizObject thisBo)
 - 不使用 `class`、`Promise`、`async/await`、解构赋值、可选链。
 - 不直接操作 DOM，不使用 `document.getElementById`、`querySelector`、`appendChild`、`setAttribute` 等。
 - 控件操作使用氚云标准 API，例如 `GetValue()`、`SetValue()`、`SetVisible()`、`SetReadonly()`。
+- `$.extend($.JForm, {...})` 中只能定义氚云支持的事件入口，例如 `OnLoad`、`OnLoadActions`、`OnValidate`、`BeforeSubmit`、`AfterSubmit`；禁止在其中扩展自定义方法或通过 `this.自定义方法()` 调用，否则可能无法执行。
+- 仅供单个事件使用的辅助判断或处理逻辑，直接定义并调用在该事件函数内部；跨事件复用的辅助函数才定义到 `window` 命名空间，并使用表单编码前缀避免冲突。
 - 前端不要循环调用服务端接口，尽量一次请求传入批量数据。
 - 子表批量添加优先使用批量方法，不要逐行频繁触发联动。
 
@@ -169,6 +172,20 @@ OnLoad: function() {
 ```
 
 ## 表单按钮校验
+
+流程表单中，`Submit` 同时用于发起提交和审批同意。仅需在发起时执行的前端校验，必须结合 `ResponseContext` 判断，不得仅以 `actionControl.Action == "Submit"` 作为条件，否则每个审批节点都会执行校验。发起提交的判断如下：
+
+```javascript
+if( actionControl.Action == "Submit" && (
+    $.SmartForm.ResponseContext.IsCreateMode || // 新增
+    $.SmartForm.ResponseContext.BizObjectStatus == 0 || // 打开草稿数据
+    $.SmartForm.ResponseContext.ActivityCode == "Activity2" // 发起节点
+) ) {
+    // 仅在发起提交时执行的校验逻辑。
+}
+```
+
+`Activity2` 是氚云流程默认的发起节点编码，未说明流程节点被调整时直接使用 `Activity2`；仅当用户明确调整过发起节点编码时，才替换为用户提供的实际编码。
 
 ```javascript
 OnValidate: function(actionControl) {
