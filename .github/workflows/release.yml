@@ -20,7 +20,12 @@ jobs:
         shell: bash
         run: |
           test -f skill/SKILL.md
-          test -f skill/CODING_STANDARDS.md
+          test -f skill/BACKEND_GUIDELINES.md
+          test -f skill/FRONTEND_GUIDELINES.md
+          test -f skill/POST_GUIDELINES.md
+          test -f skill/SQL_GUIDELINES.md
+          test -f skill/OPENAPI_GUIDELINES.md
+          test -f skill/PLATFORM_CONSTRAINTS.md
 
       - name: Create ZIP package
         id: package
@@ -29,7 +34,7 @@ jobs:
           version="${GITHUB_REF_NAME}"
           archive="h3yun-dev-assistant-${version}.zip"
           cd skill
-          zip -9 "../${archive}" SKILL.md CODING_STANDARDS.md
+          zip -9 -r "../${archive}" .
           echo "archive=${archive}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release and upload package
