@@ -206,8 +206,15 @@ OnValidate: function(actionControl) {
 
 ## 表单前后端交互
 
+表单前端使用 `$.SmartForm.PostForm` 时，必须遵守以下规则：
+
+- `actionName` 必须采用 `功能名_Post` 格式，前端传入值、后端处理方法名和后端判断值必须完全一致，例如 `QueryOrder_Post`。
+- 后端业务必须封装到与 `actionName` 同名的方法中。`OnSubmit` 只负责调用该方法和调用 `base.OnSubmit`，不得直接编写 Post 请求的参数读取、业务处理或响应赋值逻辑。
+- 自定义 Post 响应必须先执行 `response.ReturnData = new Dictionary<string, object>();`，再使用 `response.ReturnData.Add("键名", 值)` 添加每项返回值。
+- `response.ReturnData` 的类型是 `Dictionary<string, object>`，禁止直接将 `List`、数组、字符串或其他对象赋给它。返回列表时必须作为字典中的一个值，例如 `response.ReturnData.Add("items", itemList);`。
+
 ```javascript
-$.SmartForm.PostForm("Test_Post", {
+$.SmartForm.PostForm("QueryOrder_Post", {
     "orderDate": "2023-01-11"
 }, function(data) {
     if (data.Errors && data.Errors.length) {
@@ -225,13 +232,14 @@ $.SmartForm.PostForm("Test_Post", {
 ```csharp
 protected override void OnSubmit(string actionName, H3.SmartForm.SmartFormPostValue postValue, H3.SmartForm.SubmitSmartFormResponse response)
 {
-    Test_Post(actionName, this.Request, response);
+    QueryOrder_Post(actionName, this.Request, response);
     base.OnSubmit(actionName, postValue, response);
 }
 
-public void Test_Post(string actionName, H3.SmartForm.SmartFormRequest request, H3.SmartForm.SubmitSmartFormResponse response)
+// 处理查询订单的前端 Post 请求。
+public void QueryOrder_Post(string actionName, H3.SmartForm.SmartFormRequest request, H3.SmartForm.SubmitSmartFormResponse response)
 {
-    if(actionName != "Test_Post")
+    if(actionName != "QueryOrder_Post")
     {
         return;
     }
@@ -249,7 +257,8 @@ public void Test_Post(string actionName, H3.SmartForm.SmartFormRequest request, 
         DateTime orderDate = DateTime.Parse(orderDate_Str);
 
         response.ReturnData = new Dictionary<string, object>();
-        response.ReturnData["data"] = "";
+        List<string> orderNos = new List<string>();
+        response.ReturnData.Add("orderNos", orderNos);
     } catch(Exception ex)
     {
         response.Errors.Add(ex.Message);
@@ -260,6 +269,13 @@ public void Test_Post(string actionName, H3.SmartForm.SmartFormRequest request, 
 ## 列表页前后端交互
 
 列表页前后端交互使用 `$.ListView.Post`，不要写成表单页的 `$.SmartForm.PostForm`。列表按钮请求优先在 `$.ListView.ActionPreDo` 中校验选中行、数量上限，再传 `ObjectId` 数组的 JSON 字符串。
+
+列表前端使用 `$.ListView.Post` 时，必须遵守以下规则：
+
+- 自定义按钮编码为 `功能名` 时，`actionName` 必须为 `功能名_Post`。前端传入值、后端处理方法名和后端判断值必须完全一致，例如按钮 `BatchApprove` 对应 `BatchApprove_Post`。
+- 后端业务必须封装到与 `actionName` 同名的方法中。列表后端 `OnSubmit` 只负责调用该方法和调用 `base.OnSubmit`，不得直接编写 Post 请求的参数读取、业务处理或响应赋值逻辑。
+- 自定义 Post 响应必须先执行 `response.ReturnData = new Dictionary<string, object>();`，再使用 `response.ReturnData.Add("键名", 值)` 添加每项返回值。
+- `response.ReturnData` 的类型是 `Dictionary<string, object>`，禁止直接将 `List`、数组、字符串或其他对象赋给它。返回列表时必须作为字典中的一个值，例如 `response.ReturnData.Add("items", itemList);`。
 
 ```javascript
 $.ListView.ActionPreDo = function(actionCode) {
@@ -281,7 +297,7 @@ $.ListView.ActionPreDo = function(actionCode) {
         }
 
         $.IShowSuccess("成功", "系统处理中，请稍候...");
-        $.ListView.Post(actionCode + "_Post", {
+        $.ListView.Post("TestBtn_Post", {
             "seIds": JSON.stringify(seIds)
         }, function(data) {
             if (data.Errors && data.Errors.length) {
@@ -297,6 +313,48 @@ $.ListView.ActionPreDo = function(actionCode) {
         return false;
     }
 };
+```
+
+列表后端接收自定义 Post：
+
+```csharp
+protected override void OnSubmit(string actionName, H3.SmartForm.ListViewPostValue postValue, H3.SmartForm.SubmitListViewResponse response)
+{
+    TestBtn_Post(actionName, this.Request, response);
+    base.OnSubmit(actionName, postValue, response);
+}
+
+// 处理批量测试按钮的前端 Post 请求。
+public void TestBtn_Post(string actionName, H3.SmartForm.ListViewRequest request, H3.SmartForm.SubmitListViewResponse response)
+{
+    if(actionName != "TestBtn_Post")
+    {
+        return;
+    }
+
+    try
+    {
+        string seIdsStr = request["seIds"] + string.Empty;
+        if(string.IsNullOrWhiteSpace(seIdsStr))
+        {
+            throw new Exception("没有选中任何行。");
+        }
+
+        string[] seIds = this.Deserialize<string[]>(seIdsStr);
+        if(seIds == null || seIds.Length == 0)
+        {
+            throw new Exception("没有选中任何行。");
+        }
+
+        List<string> processedIds = new List<string>();
+        response.ReturnData = new Dictionary<string, object>();
+        response.ReturnData.Add("processedIds", processedIds);
+    }
+    catch(Exception ex)
+    {
+        response.Errors.Add(ex.Message);
+    }
+}
 ```
 
 ## SQL 规则

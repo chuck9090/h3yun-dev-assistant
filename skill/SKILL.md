@@ -256,6 +256,10 @@ OpenAPI 查询返回注意事项：
 - 封装方法上方是否已添加说明方法作用的注释。
 - 表单编码、字段编码使用处是否已添加对应含义注释；字段编码注释是否包含“表单名称-字段名称”。
 - 是否说明代码应放在表单后端、表单前端、列表后端或列表前端。
+- 表单 `PostForm` 场景中，`actionName`、后端方法名和判断值是否均为同一个 `功能名_Post`；`OnSubmit` 是否只负责调用该方法及 `base.OnSubmit`。
+- 表单 `PostForm` 场景中，是否先初始化 `response.ReturnData = new Dictionary<string, object>();`，并仅通过 `response.ReturnData.Add` 添加返回值；`List` 等集合是否作为字典项返回而非直接赋给 `ReturnData`。
+- 列表 `Post` 场景中，自定义按钮编码、`actionName`、后端方法名和判断值是否符合 `功能名` / `功能名_Post` 对应关系；`OnSubmit` 是否只负责调用该方法及 `base.OnSubmit`。
+- 列表 `Post` 场景中，是否先初始化 `response.ReturnData = new Dictionary<string, object>();`，并仅通过 `response.ReturnData.Add` 添加返回值；`List` 等集合是否作为字典项返回而非直接赋给 `ReturnData`。
 - 是否在信息不足时只问必要问题。
 
 ## 12. 文档索引
