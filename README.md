@@ -27,7 +27,7 @@
 
 - 本技能仅适用于氚云平台,不适用于其他低代码平台
 - 遵循氚云开发规范,禁止使用反射和 DDL 操作
-- 优先参考氚云官方开发文档
+- 优先参考氚专开发文档与氚云平台帮助文档
 
 ## 📄 许可证
 
@@ -45,6 +45,7 @@
 - `skill/SQL_GUIDELINES.md`: SQL 规则
 - `skill/OPENAPI_GUIDELINES.md`: OpenAPI 规则
 - `skill/PLATFORM_CONSTRAINTS.md`: 平台限制与长耗时任务规则
+- `skill/DEV_DOC_ROUTING.md`: 氚专开发文档按需读取路由
 - `.github/workflows/release.yml`: GitHub 自动打包与发布工作流
 
 ### 发布技能文件

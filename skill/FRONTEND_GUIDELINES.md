@@ -11,6 +11,19 @@
 
 - 点击顺序：`OnValidate` -> `BeforeSubmit` -> 后端 `OnSubmit` -> `AfterSubmit`。
 - 流程表单的 `Submit` 同时表示发起和同意。仅发起时执行的校验，必须结合 `ResponseContext` 判断新增、草稿或发起节点，不能只判断 `Submit`。
+- 未说明发起节点被调整时，默认发起节点编码为 `Activity2`，可按以下结构判断：
+
+```javascript
+if(actionControl.Action == "Submit" && (
+    $.SmartForm.ResponseContext.IsCreateMode ||
+    $.SmartForm.ResponseContext.BizObjectStatus == 0 ||
+    $.SmartForm.ResponseContext.ActivityCode == "Activity2"
+))
+{
+    // 仅在流程发起时执行的校验。
+}
+```
+
 - 自定义 Post 按钮在 `OnValidate` 中完成必要校验后返回 `false`，阻止平台默认提交。
 
 ## 列表按钮

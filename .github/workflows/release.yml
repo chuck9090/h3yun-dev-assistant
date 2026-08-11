@@ -26,6 +26,7 @@ jobs:
           test -f skill/SQL_GUIDELINES.md
           test -f skill/OPENAPI_GUIDELINES.md
           test -f skill/PLATFORM_CONSTRAINTS.md
+          test -f skill/DEV_DOC_ROUTING.md
 
       - name: Create ZIP package
         id: package
