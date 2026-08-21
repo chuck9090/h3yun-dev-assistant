@@ -4,7 +4,7 @@
 
 | 需求意图或关键词 | 必读开发文档 |
 | --- | --- |
-| 按钮编码、自定义按钮、`actionName` | [按钮编码](https://h3yunpro.github.io/docs/action-code/) |
+| 按钮编码、自定义按钮、`actionName`、动态增删表单按钮、`response.Actions` | 读取技能内置 `FORM_ACTIONS_GUIDELINES.md`；动态按钮不再依赖旧版官方网页 |
 | 自动化、业务规则与代码的执行顺序或副作用 | [代码跟自动化混用](https://h3yunpro.github.io/docs/automation/) |
 | 创建、加载、查询、提交、删除 `BizObject` | [业务对象](https://h3yunpro.github.io/docs/biz-object/) |
 | 后端读取或设置主表、子表控件值 | [业务对象之控件的取值与赋值](https://h3yunpro.github.io/docs/bo-set-get/) |
