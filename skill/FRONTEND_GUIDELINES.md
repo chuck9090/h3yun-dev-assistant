@@ -5,6 +5,21 @@
 - 使用 `var` 和 `function`；禁止 `let`、`const`、箭头函数、`class`、`Promise`、`async/await`、解构、模板字符串和可选链。
 - 不直接操作 DOM；控件仅使用氚云 API，例如 `GetValue()`、`SetValue()`、`SetVisible()`、`SetReadonly()`。
 - `$.extend($.JForm, {...})` 只定义平台支持的事件入口。单一事件的辅助逻辑放在事件内部；跨事件复用时定义到带表单编码前缀的 `window` 方法。
+- 如需使用匿名函数隔离单一事件的局部变量，匿名函数必须写在具体事件内部，并传入该事件的 `this`；不得用匿名函数包裹整个 `$.extend($.JForm, {...})`。推荐写法：
+
+```javascript
+$.extend($.JForm, {
+    OnLoad: function () {
+        (function (that) {
+            // 当前事件的辅助逻辑、局部变量和事件绑定。
+        }(this));
+    },
+
+    OnValidate: function (actionControl) {
+        return true;
+    }
+});
+```
 - 不循环调用服务端接口；子表新增优先批量操作。
 
 ## 表单按钮
