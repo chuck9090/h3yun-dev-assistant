@@ -20,7 +20,7 @@
 | 表单或列表前后端请求、`PostForm`、`ListView.Post` | [前后端交互示例](https://h3yunpro.github.io/docs/interactive-example/)；必要时参考 [纯净代码示例](https://h3yunpro.github.io/docs/pure-example/) |
 | 表单前端完整示例、事件代码示例 | [前端代码示例](https://h3yunpro.github.io/docs/js-example/)；常见组合场景参考 [前端常用实例](https://h3yunpro.github.io/docs/js-instance/) |
 | .NET/C#、JavaScript、浏览器兼容性 | [技术栈](https://h3yunpro.github.io/docs/language/) |
-| 列表前端或后端事件 | [列表事件](https://h3yunpro.github.io/docs/list-events/) |
+| 列表前端或后端事件 | [列表事件](https://h3yunpro.github.io/docs/list-events/)；列表删除获取选中数据时，另读 [后端代码示例-列表删除时获得用户选择的数据](https://h3yunpro.github.io/docs/cs-example/#%E5%88%97%E8%A1%A8-%E5%88%A0%E9%99%A4%E6%97%B6%E8%8E%B7%E5%BE%97%E7%94%A8%E6%88%B7%E9%80%89%E6%8B%A9%E7%9A%84%E6%95%B0%E6%8D%AE) |
 | 列表前端 API、选中行、刷新、列表按钮 | [列表前端 API](https://h3yunpro.github.io/docs/list-js-api/) |
 | 短信、通知、提醒 | [消息通知与提醒](https://h3yunpro.github.io/docs/notification/) |
 | 平台术语、状态或对象含义 | [常见名词](https://h3yunpro.github.io/docs/noun/) |

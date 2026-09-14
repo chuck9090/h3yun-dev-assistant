@@ -47,6 +47,12 @@
 - `skill/PLATFORM_CONSTRAINTS.md`: 平台限制与长耗时任务规则
 - `skill/DEV_DOC_ROUTING.md`: 氚专开发文档按需读取路由
 - `.github/workflows/release.yml`: GitHub 自动打包与发布工作流
+- `skill/TOOL_FUNCTIONS.md`: 氚云常用工具方法本地复用库
+
+### 代码风格与复用
+
+- 后端 C# 代码使用 Allman 风格,前端 ES5 代码使用 K&R 风格
+- 编写代码前优先检查并复用 `skill/TOOL_FUNCTIONS.md`
 
 ### 发布技能文件
 

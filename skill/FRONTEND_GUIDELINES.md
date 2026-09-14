@@ -2,6 +2,7 @@
 
 ## 硬性规则
 
+- `if`、`else if`、`else`、`for`、`for in`、`while`、`do while` 等控制流语句必须使用大括号，即使代码块中只有一条语句也不得省略；大括号采用 K&R 风格，与控制流语句同行。只调整既有代码格式时不得改变业务逻辑。
 - 使用 `var` 和 `function`；禁止 `let`、`const`、箭头函数、`class`、`Promise`、`async/await`、解构、模板字符串和可选链。
 - 不直接操作 DOM；控件仅使用氚云 API，例如 `GetValue()`、`SetValue()`、`SetVisible()`、`SetReadonly()`。
 - `$.extend($.JForm, {...})` 只定义平台支持的事件入口。单一事件的辅助逻辑放在事件内部；跨事件复用时定义到带表单编码前缀的 `window` 方法。
@@ -29,12 +30,11 @@ $.extend($.JForm, {
 - 未说明发起节点被调整时，默认发起节点编码为 `Activity2`，可按以下结构判断：
 
 ```javascript
-if(actionControl.Action == "Submit" && (
+if (actionControl.Action == "Submit" && (
     $.SmartForm.ResponseContext.IsCreateMode ||
     $.SmartForm.ResponseContext.BizObjectStatus == 0 ||
     $.SmartForm.ResponseContext.ActivityCode == "Activity2"
-))
-{
+)) {
     // 仅在流程发起时执行的校验。
 }
 ```

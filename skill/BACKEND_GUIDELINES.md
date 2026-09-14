@@ -3,6 +3,7 @@
 ## 硬性限制
 
 - 使用 .NET Framework 4.6.2 兼容语法；不使用 C# 8+ 特性、反射、`HashSet<T>` 或三目运算符。
+- `if`、`else if`、`else`、`for`、`foreach`、`while`、`do while` 等控制流语句必须使用大括号，即使代码块中只有一条语句也不得省略；大括号采用 Allman 风格，单独占一行。只调整既有代码格式时不得改变业务逻辑。
 - 不使用 `Task`、线程、线程池、普通 .NET 定时器或本地文件 I/O。涉及这些场景时先读取 `PLATFORM_CONSTRAINTS.md`。
 - 不自行建立数据库连接，不使用 DDL，不直接用 SQL 增删改业务数据；业务数据操作使用 `BizObject`，批量操作使用平台批量接口。
 - 在表单 `Post` 请求中，如果需要更新或删除当前业务对象，不能直接操作 `this.Request.BizObject`；必须先使用当前业务对象的 `ObjectId` 调用 `H3.DataModel.BizObject.Load` 加载完整业务对象，再执行赋值、`Update()` 或 `Remove()`。
@@ -16,6 +17,52 @@
 - `OnSubmit` 统一捕获业务异常，以 `response.Errors.Add(ex.Message)` 返回。
 - 比较时优先常量在前，例如 `"Submit".Equals(actionName)`。
 - 流程表单的 `Submit` 同时可能表示发起提交和审批同意。仅在发起时执行的后端逻辑，必须结合数据状态和当前流程节点判断，不能只判断 `"Submit".Equals(actionName)`。
+
+## 列表删除获取选中数据
+
+- 列表后端处理系统删除按钮时，使用 `postValue.Data["ObjectIds"]` 获取用户选中的业务对象 Id 数组，标准写法为：`string[] selectedIds = (string[]) postValue.Data["ObjectIds"];`。
+- 该写法来自官方后端代码示例“列表-删除时获得用户选择的数据”：https://h3yunpro.github.io/docs/cs-example/#%E5%88%97%E8%A1%A8-%E5%88%A0%E9%99%A4%E6%97%B6%E8%8E%B7%E5%BE%97%E7%94%A8%E6%88%B7%E9%80%89%E6%8B%A9%E7%9A%84%E6%95%B0%E6%8D%AE 。不得猜测为 `postValue["seIds"]`、`postValue["ObjectIds"]` 或其他参数名。
+- 使用前必须判断数组不为 `null` 且长度大于 0；需要批量查询时，用 `ObjectId` 配合 `ComparisonOperatorType.In` 构造筛选器，并校验查询结果数量与选中 Id 数量一致。
+- 列表 `OnSubmit` 处理删除时，无论自定义逻辑成功或异常，都必须保证 `base.OnSubmit(actionName, postValue, response)` 执行；异常应写入 `response.Errors` 后返回。
+
+```csharp
+protected override void OnSubmit(string actionName, H3.SmartForm.ListViewPostValue postValue, H3.SmartForm.SubmitListViewResponse response)
+{
+    try
+    {
+        if("Remove".Equals(actionName))
+        {
+            // 列表删除-用户选中的业务对象 Id
+            string[] selectedIds = (string[]) postValue.Data["ObjectIds"];
+            if(selectedIds != null && selectedIds.Length > 0)
+            {
+                // 列表表单-按选中业务对象 Id 批量查询
+                H3.Data.Filter.Filter filter = new H3.Data.Filter.Filter();
+                H3.Data.Filter.And andMatcher = new H3.Data.Filter.And();
+                andMatcher.Add(new H3.Data.Filter.ItemMatcher("ObjectId", H3.Data.ComparisonOperatorType.In, selectedIds));
+                filter.Matcher = andMatcher;
+                filter.FromRowNum = 0;
+                filter.ToRowNum = 1000;
+                H3.DataModel.BizObject[] boArray = H3.DataModel.BizObject.GetList(
+                    this.Engine,
+                    H3.Organization.User.SystemUserId,
+                    this.Request.Schema,
+                    H3.DataModel.GetListScopeType.GlobalAll,
+                    filter
+                );
+            }
+        }
+    }
+    catch(Exception ex)
+    {
+        response.Errors.Add(ex.Message);
+        base.OnSubmit(actionName, postValue, response);
+        return;
+    }
+
+    base.OnSubmit(actionName, postValue, response);
+}
+```
 
 ## 表单按钮增删
 
