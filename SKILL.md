@@ -43,6 +43,7 @@ description: 氚云、H3Yun、H3、SmartForm、BizObject、OnLoad、OnSubmit、�
 - 生成或修改任意后端 C# 代码，包括表单后端、列表后端、`BizObject`、`OnLoad`、`OnSubmit`、流程、组织、消息、自定义接口、WebAPI/WebService、业务校验：读取 `references/BACKEND_GUIDELINES.md`。
 - 后端读取或设置 `BizObject` 的主表或子表控件值时：查阅 `references/BACKEND_GUIDELINES.md` 指定的“业务对象控件取值与赋值”开发文档，不得猜测类型。
 - 表单前端、列表前端、按钮校验、控件操作：读取 `references/FRONTEND_GUIDELINES.md`。
+- 按钮编码、自定义按钮、`actionName`、动态增删表单按钮、`response.Actions`：读取 `references/FORM_ACTIONS_GUIDELINES.md`。
 - 表单 `$.SmartForm.PostForm`、列表 `$.ListView.Post`、自定义 Post、前后端交互、按钮请求后端、`功能名_Post`、`ReturnData`：必须读取 `references/POST_GUIDELINES.md`；若同时生成后端或前端，也读取对应规则文件。
 - SQL、高级数据源、后端查询：读取 `references/SQL_GUIDELINES.md`。后端 SQL 查询还必须读取 `references/BACKEND_GUIDELINES.md`。不确定表单或字段编码时，优先通过氚云 SQL 排查工具读取 `cmax.json` 和 `fields.md`。
 - 异步、后台执行、线程、并发、`Task`、队列、定时器、计划或周期任务、批量、长耗时、导入、大数据量、性能优化、文件、附件、缓存、本地 I/O、自定义接口、OpenAPI、超时、频率、乐观锁、重复执行、失败重试或幂等：必须读取 `references/PLATFORM_CONSTRAINTS.md`。

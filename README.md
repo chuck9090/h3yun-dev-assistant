@@ -46,7 +46,7 @@
 - `references/OPENAPI_GUIDELINES.md`: OpenAPI 规则
 - `references/PLATFORM_CONSTRAINTS.md`: 平台限制与长耗时任务规则
 - `references/DEV_DOC_ROUTING.md`: 氚专开发文档按需读取路由
-- `references/FORM_ACTIONS_GUIDELINES.md`: 表单与列表按钮规则
+- `references/FORM_ACTIONS_GUIDELINES.md`: 表单按钮规则
 - `references/TOOL_FUNCTIONS.md`: 氚云常用工具方法本地复用库
 - `.github/workflows/release.yml`: GitHub 自动打包与发布工作流
 
@@ -57,7 +57,7 @@
 
 ### 发布技能文件
 
-推送以 `v` 开头的版本 Tag 后,GitHub Actions 会校验 `SKILL.md` 与 `references/` 下的规则文档，并生成带版本号的 ZIP。ZIP 顶层固定为同名技能目录 `h3yun-dev-assistant/`，内含 `SKILL.md` 与 `references/`，解压到任意技能目录即可直接使用，无需手工调整目录名。新增规则文件或其他资源文件必须先提交到创建 Tag 的提交中。
+推送以 `v` 开头的版本 Tag 后,GitHub Actions 会校验 `SKILL.md` 与 `references/` 下的规则文档,并生成带版本号的 ZIP。ZIP 顶层固定为同名技能目录 `h3yun-dev-assistant/`,内含 `SKILL.md` 与 `references/`,解压到任意技能目录即可直接使用,无需手工调整目录名。新增规则文件或其他资源文件必须先提交到创建 Tag 的提交中。
 
 例如发布 `v1.0.0`:
 

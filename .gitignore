@@ -39,4 +39,4 @@ _site/
 *.backup
 
 # 打包文件
-h3yun-dev-assistant.zip
+h3yun-dev-assistant-*.zip
