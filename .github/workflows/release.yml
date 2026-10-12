@@ -20,15 +20,15 @@ jobs:
         shell: bash
         run: |
           test -f SKILL.md
-          test -f docs/BACKEND_GUIDELINES.md
-          test -f docs/FRONTEND_GUIDELINES.md
-          test -f docs/POST_GUIDELINES.md
-          test -f docs/SQL_GUIDELINES.md
-          test -f docs/OPENAPI_GUIDELINES.md
-          test -f docs/PLATFORM_CONSTRAINTS.md
-          test -f docs/DEV_DOC_ROUTING.md
-          test -f docs/FORM_ACTIONS_GUIDELINES.md
-          test -f docs/TOOL_FUNCTIONS.md
+          test -f references/BACKEND_GUIDELINES.md
+          test -f references/FRONTEND_GUIDELINES.md
+          test -f references/POST_GUIDELINES.md
+          test -f references/SQL_GUIDELINES.md
+          test -f references/OPENAPI_GUIDELINES.md
+          test -f references/PLATFORM_CONSTRAINTS.md
+          test -f references/DEV_DOC_ROUTING.md
+          test -f references/FORM_ACTIONS_GUIDELINES.md
+          test -f references/TOOL_FUNCTIONS.md
 
       - name: Create ZIP package
         id: package
@@ -36,7 +36,10 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME}"
           archive="h3yun-dev-assistant-${version}.zip"
-          zip -9 -r "${archive}" SKILL.md docs
+          # 先搭出同名技能目录，使 ZIP 顶层为 <skill-name>/SKILL.md，解压即符合 Agent Skills 规范
+          mkdir -p "h3yun-dev-assistant"
+          cp -r SKILL.md references "h3yun-dev-assistant/"
+          zip -9 -r "${archive}" "h3yun-dev-assistant"
           echo "archive=${archive}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release and upload package
