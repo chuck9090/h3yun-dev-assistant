@@ -19,14 +19,16 @@ jobs:
       - name: Validate package files
         shell: bash
         run: |
-          test -f skill/SKILL.md
-          test -f skill/BACKEND_GUIDELINES.md
-          test -f skill/FRONTEND_GUIDELINES.md
-          test -f skill/POST_GUIDELINES.md
-          test -f skill/SQL_GUIDELINES.md
-          test -f skill/OPENAPI_GUIDELINES.md
-          test -f skill/PLATFORM_CONSTRAINTS.md
-          test -f skill/DEV_DOC_ROUTING.md
+          test -f SKILL.md
+          test -f docs/BACKEND_GUIDELINES.md
+          test -f docs/FRONTEND_GUIDELINES.md
+          test -f docs/POST_GUIDELINES.md
+          test -f docs/SQL_GUIDELINES.md
+          test -f docs/OPENAPI_GUIDELINES.md
+          test -f docs/PLATFORM_CONSTRAINTS.md
+          test -f docs/DEV_DOC_ROUTING.md
+          test -f docs/FORM_ACTIONS_GUIDELINES.md
+          test -f docs/TOOL_FUNCTIONS.md
 
       - name: Create ZIP package
         id: package
@@ -34,8 +36,7 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME}"
           archive="h3yun-dev-assistant-${version}.zip"
-          cd skill
-          zip -9 -r "../${archive}" .
+          zip -9 -r "${archive}" SKILL.md docs
           echo "archive=${archive}" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release and upload package

@@ -36,27 +36,28 @@
 ## 🚀 快速开始
 
 ### 项目结构
-技能内容放在 `skill/` 子目录中,外层文件用于项目说明和打包维护。
+`SKILL.md` 位于仓库根目录,规则文档统一放在 `docs/` 子目录中,其余文件用于项目说明和打包维护。
 
-- `skill/SKILL.md`: 技能主说明文件
-- `skill/BACKEND_GUIDELINES.md`: 后端 C# 规则
-- `skill/FRONTEND_GUIDELINES.md`: 前端 ES5 规则
-- `skill/POST_GUIDELINES.md`: 表单与列表 Post 规则
-- `skill/SQL_GUIDELINES.md`: SQL 规则
-- `skill/OPENAPI_GUIDELINES.md`: OpenAPI 规则
-- `skill/PLATFORM_CONSTRAINTS.md`: 平台限制与长耗时任务规则
-- `skill/DEV_DOC_ROUTING.md`: 氚专开发文档按需读取路由
+- `SKILL.md`: 技能主说明文件
+- `docs/BACKEND_GUIDELINES.md`: 后端 C# 规则
+- `docs/FRONTEND_GUIDELINES.md`: 前端 ES5 规则
+- `docs/POST_GUIDELINES.md`: 表单与列表 Post 规则
+- `docs/SQL_GUIDELINES.md`: SQL 规则
+- `docs/OPENAPI_GUIDELINES.md`: OpenAPI 规则
+- `docs/PLATFORM_CONSTRAINTS.md`: 平台限制与长耗时任务规则
+- `docs/DEV_DOC_ROUTING.md`: 氚专开发文档按需读取路由
+- `docs/FORM_ACTIONS_GUIDELINES.md`: 表单与列表按钮规则
+- `docs/TOOL_FUNCTIONS.md`: 氚云常用工具方法本地复用库
 - `.github/workflows/release.yml`: GitHub 自动打包与发布工作流
-- `skill/TOOL_FUNCTIONS.md`: 氚云常用工具方法本地复用库
 
 ### 代码风格与复用
 
 - 后端 C# 代码使用 Allman 风格,前端 ES5 代码使用 K&R 风格
-- 编写代码前优先检查并复用 `skill/TOOL_FUNCTIONS.md`
+- 编写代码前优先检查并复用 `docs/TOOL_FUNCTIONS.md`
 
 ### 发布技能文件
 
-推送以 `v` 开头的版本 Tag 后,GitHub Actions 会校验并递归打包 `skill/` 目录下的全部文件，且保持 `SKILL.md` 位于 ZIP 根目录，生成带版本号的 ZIP,并上传到该 Tag 对应的 GitHub Release。新增规则文件或其他资源文件必须先提交到创建 Tag 的提交中。
+推送以 `v` 开头的版本 Tag 后,GitHub Actions 会校验并打包仓库根目录的 `SKILL.md` 与 `docs/` 目录下的全部文件，且保持 `SKILL.md` 位于 ZIP 根目录、规则文档位于 `docs/` 子目录，生成带版本号的 ZIP,并上传到该 Tag 对应的 GitHub Release。新增规则文件或其他资源文件必须先提交到创建 Tag 的提交中。
 
 例如发布 `v1.0.0`:
 
