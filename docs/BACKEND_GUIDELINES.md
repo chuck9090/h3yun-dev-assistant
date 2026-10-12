@@ -4,7 +4,7 @@
 
 - 使用 .NET Framework 4.6.2 兼容语法；不使用 C# 8+ 特性、反射、`HashSet<T>` 或三目运算符。
 - `if`、`else if`、`else`、`for`、`foreach`、`while`、`do while` 等控制流语句必须使用大括号，即使代码块中只有一条语句也不得省略；大括号采用 Allman 风格，单独占一行。只调整既有代码格式时不得改变业务逻辑。
-- 不使用 `Task`、线程、线程池、普通 .NET 定时器或本地文件 I/O。涉及这些场景时先读取 `PLATFORM_CONSTRAINTS.md`。
+- 不使用 `Task`、线程、线程池、普通 .NET 定时器或本地文件 I/O。涉及这些场景时先读取 `docs/PLATFORM_CONSTRAINTS.md`。
 - 不自行建立数据库连接，不使用 DDL，不直接用 SQL 增删改业务数据；业务数据操作使用 `BizObject`，批量操作使用平台批量接口。
 - 在表单 `Post` 请求中，如果需要更新或删除当前业务对象，不能直接操作 `this.Request.BizObject`；必须先使用当前业务对象的 `ObjectId` 调用 `H3.DataModel.BizObject.Load` 加载完整业务对象，再执行赋值、`Update()` 或 `Remove()`。
 - 避免循环调用 Engine、数据库或服务端接口；大数据量须分页或增加过滤条件。
