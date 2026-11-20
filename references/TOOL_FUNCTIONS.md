@@ -23,15 +23,56 @@ public static int gIntNum(object val) { return gNum(val, 0); }
 public static decimal gDecimalSum(object objArray, string field) { return gSum(objArray, field, 0m); }
 public static double gDoubleSum(object objArray, string field) { return gSum(objArray, field, 0.0); }
 public static int gIntSum(object objArray, string field) { return gSum(objArray, field, 0); }
-public static decimal gNum(object val, decimal defVal) { string s = val + string.Empty; s = string.IsNullOrWhiteSpace(s) ? "0" : s; decimal n = defVal; return decimal.TryParse(s, out n) ? n : defVal; }
-public static double gNum(object val, double defVal) { string s = val + string.Empty; s = string.IsNullOrWhiteSpace(s) ? "0" : s; double n = defVal; return double.TryParse(s, out n) ? n : defVal; }
-public static int gNum(object val, int defVal) { string s = val + string.Empty; s = string.IsNullOrWhiteSpace(s) ? "0" : s; int n = defVal; return int.TryParse(s, out n) ? n : defVal; }
+// 数字转换：必须先按类型处理，字符串再允许指数形式，否则 double 科学计数法会被解析成 0。
+public static decimal gNum(object val, decimal defVal)
+{
+    if(val == null) return 0m;
+    if(val is decimal) return (decimal)val;
+    if(val is double) return Convert.ToDecimal((double)val);
+    if(val is float) return Convert.ToDecimal((float)val);
+    string s = val + string.Empty;
+    if(string.IsNullOrWhiteSpace(s)) return 0m;
+    decimal n = defVal;
+    return decimal.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out n) ? n : defVal;
+}
+public static double gNum(object val, double defVal)
+{
+    if(val == null) return 0.0;
+    if(val is double) return (double)val;
+    if(val is float) return (float)val;
+    if(val is decimal) return (double)(decimal)val;
+    string s = val + string.Empty;
+    if(string.IsNullOrWhiteSpace(s)) return 0.0;
+    double n = defVal;
+    return double.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out n) ? n : defVal;
+}
+public static int gNum(object val, int defVal)
+{
+    if(val == null) return 0;
+    if(val is int) return (int)val;
+    string s = val + string.Empty;
+    if(string.IsNullOrWhiteSpace(s)) return 0;
+    int n = defVal;
+    if(int.TryParse(s, out n)) return n;
+    decimal d = 0m;
+    return decimal.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out d) ? (int)d : defVal;
+}
 public static bool tTime(object val, out DateTime time) { return DateTime.TryParse(val + string.Empty, out time); }
 public static DateTime gTime(object val, DateTime defaultTime) { string s = val + string.Empty; if(string.IsNullOrWhiteSpace(s)) return defaultTime; DateTime t = defaultTime; return DateTime.TryParse(s, out t) ? t : defaultTime; }
 public static string g200Str(string str) { return !string.IsNullOrWhiteSpace(str) && str.Length > 200 ? str.Substring(0, 200) : str; }
 public static string g2000Str(string str) { return !string.IsNullOrWhiteSpace(str) && str.Length > 2000 ? str.Substring(0, 2000) : str; }
 public static decimal gRound(decimal num, int digits) { return System.Math.Round(num, digits, System.MidpointRounding.AwayFromZero); }
 ```
+
+### 数字转换必须兼容科学计数法
+
+氚云数字控件在文档中标注为 `decimal`，但实际运行时表单结构的内部数据类型是 `Double`，取值可能以 `double`/`float` 形式返回。这类值转字符串时，小于 `0.0001` 的数会输出科学计数法，例如 `0.00007 -> "7E-05"`、`0.00003 -> "3E-05"`。而 `decimal.TryParse(s, out n)` 默认使用 `NumberStyles.Number`，不支持指数形式，会解析失败并返回默认值 `0`：数据库里导入的是 `0.00007`，生成 BOM 后用量变成 `0`；若后续还有 `if(用量 <= 0) continue;`，该物料会直接从物料需求明细中消失（真实案例：多级 BOM 导入生成 BOM 时，`0.00007` 的导电炭黑和 `0.00003` 的 CMC 变成 `0`，研发立项物料需求明细中对应物料缺行）。
+
+因此：
+
+- `gNum`、`gDecimalNum`、`gDoubleNum`、`gIntNum`，以及项目内自定义的 `GetDecimal`/`ToDecimal` 等所有通用数字转换方法，都必须先按类型处理（`decimal` 直接返回，`double`/`float` 用 `Convert.ToDecimal` 等直接转换），仅对字符串使用 `decimal.TryParse(s, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out n)`。
+- 禁止写成 `decimal.TryParse(s, out n)` 并把解析失败的结果留成默认值 `0`；也不得只依赖 `gStr` 转字符串后再集中解析。
+- 涉及用量、金额、系数等可能为极小值的字段时，转换后必须验证非零值未被吞掉。
 
 ### 子表汇总依赖
 
@@ -93,4 +134,5 @@ function MyDateFormat(d, fmt) {
 - 是否存在可直接复用的工具方法及其依赖。
 - 是否只复制必要方法，避免重复定义同名方法。
 - 每个方法的参数、返回值、适用位置和平台上下文是否已确认。
+- 数字转换方法是否已按类型处理并使用 `NumberStyles.Float`，确保 `double` 科学计数法（如 `7E-05`）不会被解析成 `0`。
 - 工具方法内部使用的氚云类型或平台成员是否逐项完成签名与参数自检。

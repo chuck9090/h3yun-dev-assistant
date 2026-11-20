@@ -101,6 +101,7 @@ protected override void OnLoad(H3.SmartForm.LoadSmartFormResponse response)
 - 从业务对象读取子表控件值时，必须转换为 `H3.DataModel.BizObject[]`，例如：`H3.DataModel.BizObject[] detailRows = thisBo["子表控件编码"] as H3.DataModel.BizObject[];`。
 - 禁止将子表控件值转换为 `List<H3.DataModel.BizObject>`；平台返回的子表值类型为数组，错误转换会导致读取结果为空或运行异常。
 - 使用子表数据前先判断数组是否为 `null` 或长度为 `0`，再用 `foreach` 遍历每一行。
+- 读取数字控件值时，优先复用 `references/TOOL_FUNCTIONS.md` 中的 `gDecimalNum`/`gNum`；若自行转换，必须先判断 `decimal`/`double`/`float` 类型，字符串再使用 `NumberStyles.Float` 解析。禁止直接 `decimal.Parse(bo["数字控件"] + string.Empty)` 或 `decimal.TryParse(s, out n)` 默认样式：数字控件运行时为 `Double`，极小值转字符串是科学计数法（如 `0.00007` 变成 `"7E-05"`），会抛异常或被吞成 `0`。
 
 ## 自定义类
 
